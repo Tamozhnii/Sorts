@@ -479,6 +479,37 @@ class Sort {
   }
 
   /**
+   * **Гномья сортировка**
+   * - Вычисление min - `O(n-1)`, max - `O(n^2-(n*2-1))`, default - O(n^2)
+   * - Память `O()`
+   */
+  static GnomeSort = (array) => {
+    const start = new Date().getTime()
+    const result = [...array]
+    let temp = 0
+    let i = 0
+
+    let a = 0
+
+    while (i < result.length - 1) {
+      a++
+      if (result[i] <= result[i + 1] || i === 0) {
+        i++
+      } else {
+        temp = result[i]
+        result[i] = result[i + 1]
+        result[i + 1] = temp
+        i--
+      }
+    }
+    const end = new Date().getTime()
+    result.push(`O(${a})`)
+    result.push(`${end - start}ms`)
+
+    return result
+  }
+
+  /**
    * ** сортировка**
    * - Вычисление min - `O()`, max - `O()`, default - O()
    * - Память `O()`
@@ -496,9 +527,9 @@ let testArray = []
 // ]
 // testArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 // testArray = [20, 19, 18, 17, 16, 15, 14, 13, 12, 11]
-// testArray = [
-//   20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
-// ]
+testArray = [
+  20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
+]
 // testArray = [
 //   2, 3, 7, 4, 1, 5, 6, 9, 8, 10, 17, 13, 14, 12, 11, 16, 18, 15, 20, 19,
 // ]
@@ -507,11 +538,11 @@ let testArray = []
 // ]
 // testArray = [6, 1, 9, 4, 2, 7, 5, 3, 8]
 
-for (let index = 0; index < 1000; index++) {
-  testArray.push(Math.round(Math.random() * 100)) //default
-  // testArray.push(index) //min
-  // testArray.reverse() //max
-}
+// for (let index = 0; index < 1000; index++) {
+//   testArray.push(Math.round(Math.random() * 100)) //default
+//   // testArray.push(index) //min
+//   // testArray.reverse() //max
+// }
 
 if (content) {
   insertResult('Initial', testArray)
@@ -520,17 +551,18 @@ if (content) {
   insertResult('InsertionSort', Sort.InsertionSort(testArray))
   insertResult('SelectionSort', Sort.SelectionSort(testArray))
   insertResult('ShellSort', Sort.ShellSort(testArray))
-  insertResult('TreeSort', Sort.TreeSort(testArray))
+  // insertResult('TreeSort', Sort.TreeSort(testArray))
   insertResult('HeapSort', Sort.HeapSort(testArray))
-  insertResult(
-    'Default',
-    (function () {
-      const start = new Date().getTime()
-      const result = testArray.sort()
-      const end = new Date().getTime()
-      result.push('?')
-      result.push(`${end - start}ms`)
-      return result
-    })()
-  )
+  insertResult('GnomeSort', Sort.GnomeSort(testArray))
+  // insertResult(
+  //   'Default',
+  //   (function () {
+  //     const start = new Date().getTime()
+  //     const result = testArray.sort()
+  //     const end = new Date().getTime()
+  //     result.push('?')
+  //     result.push(`${end - start}ms`)
+  //     return result
+  //   })()
+  // )
 }
