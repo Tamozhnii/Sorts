@@ -480,8 +480,8 @@ class Sort {
 
   /**
    * **Гномья сортировка**
-   * - Вычисление min - `O(n-1)`, max - `O(n^2-(n*2-1))`, default - O(n^2)
-   * - Память `O()`
+   * - Вычисление min - `O(n-1)`, max - `O(n^2-1)`, default - O(n^2)
+   * - Память `O(n+2)`
    */
   static GnomeSort = (array) => {
     const start = new Date().getTime()
@@ -493,7 +493,7 @@ class Sort {
 
     while (i < result.length - 1) {
       a++
-      if (result[i] <= result[i + 1] || i === 0) {
+      if (result[i] <= result[i + 1] || i < 0) {
         i++
       } else {
         temp = result[i]
@@ -502,6 +502,62 @@ class Sort {
         i--
       }
     }
+    const end = new Date().getTime()
+    result.push(`O(${a})`)
+    result.push(`${end - start}ms`)
+
+    return result
+  }
+
+  /**
+   * **Поразрядная сортировка**
+   * Для ключей от 0 - 9!
+   * - Вычисление `O(?)`, default - O(n)
+   */
+  static RadixSort = (array) => {
+    const start = new Date().getTime()
+    let result = [...array]
+
+    let a = 0
+
+    const groups = new Object()
+    for (let i = 0; i < 10; i++) {
+      a++
+      groups[i] = []
+    }
+
+    let numLength = 0
+    result.forEach((el) => {
+      a++
+      // const len = Math.floor(Math.log10(el)) + 1
+      const len = el.toString().length
+      if (len > numLength) numLength = len
+    })
+
+    for (let step = 0; step < numLength; step++) {
+      a++
+      result.forEach((el) => {
+        a++
+        const value = Math.floor(
+          (el % Math.floor(Math.pow(10, step + 1))) /
+            Math.floor(Math.pow(10, step))
+        )
+
+        groups[value].push(el)
+      })
+
+      result = []
+
+      for (let i = 0; i < 10; i++) {
+        a++
+        groups[i].forEach((num) => {
+          a++
+          result.push(num)
+        })
+        groups[i] = []
+      }
+    }
+
     const end = new Date().getTime()
     result.push(`O(${a})`)
     result.push(`${end - start}ms`)
@@ -522,27 +578,27 @@ class Sort {
 }
 
 let testArray = []
-// testArray = [
-//   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-// ]
+testArray = [
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+]
 // testArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 // testArray = [20, 19, 18, 17, 16, 15, 14, 13, 12, 11]
 testArray = [
   20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
 ]
-// testArray = [
-//   2, 3, 7, 4, 1, 5, 6, 9, 8, 10, 17, 13, 14, 12, 11, 16, 18, 15, 20, 19,
-// ]
+testArray = [
+  2, 3, 7, 4, 1, 5, 6, 9, 8, 10, 17, 13, 14, 12, 11, 16, 18, 15, 20, 19,
+]
 // testArray = [
 //   20, 1, 15, 4, 17, 9, 10, 3, 12, 2, 19, 13, 5, 14, 6, 7, 18, 8, 11, 16,
 // ]
 // testArray = [6, 1, 9, 4, 2, 7, 5, 3, 8]
 
-// for (let index = 0; index < 1000; index++) {
-//   testArray.push(Math.round(Math.random() * 100)) //default
-//   // testArray.push(index) //min
-//   // testArray.reverse() //max
-// }
+for (let index = 0; index < 5000; index++) {
+  testArray.push(Math.round(Math.random() * 100)) //default
+  // testArray.push(index) //min
+  // testArray.reverse() //max
+}
 
 if (content) {
   insertResult('Initial', testArray)
@@ -551,18 +607,19 @@ if (content) {
   insertResult('InsertionSort', Sort.InsertionSort(testArray))
   insertResult('SelectionSort', Sort.SelectionSort(testArray))
   insertResult('ShellSort', Sort.ShellSort(testArray))
-  // insertResult('TreeSort', Sort.TreeSort(testArray))
+  insertResult('TreeSort', Sort.TreeSort(testArray))
   insertResult('HeapSort', Sort.HeapSort(testArray))
   insertResult('GnomeSort', Sort.GnomeSort(testArray))
-  // insertResult(
-  //   'Default',
-  //   (function () {
-  //     const start = new Date().getTime()
-  //     const result = testArray.sort()
-  //     const end = new Date().getTime()
-  //     result.push('?')
-  //     result.push(`${end - start}ms`)
-  //     return result
-  //   })()
-  // )
+  insertResult('RadixSort', Sort.RadixSort(testArray))
+  insertResult(
+    'DefaultSort',
+    (function () {
+      const start = new Date().getTime()
+      const result = testArray.sort((a, b) => (a < b ? -1 : 1))
+      const end = new Date().getTime()
+      result.push('?')
+      result.push(`${end - start}ms`)
+      return result
+    })()
+  )
 }
