@@ -512,7 +512,7 @@ class Sort {
   /**
    * **Поразрядная сортировка**
    * Для ключей от 0 - 9!
-   * - Вычисление `O(?)`, default - O(n)
+   * - Вычисление `O(?)>n*10*maxNumLength`, default - O(n)
    */
   static RadixSort = (array) => {
     const start = new Date().getTime()
@@ -529,7 +529,6 @@ class Sort {
     let numLength = 0
     result.forEach((el) => {
       a++
-      // const len = Math.floor(Math.log10(el)) + 1
       const len = el.toString().length
       if (len > numLength) numLength = len
     })
@@ -566,15 +565,83 @@ class Sort {
   }
 
   /**
-   * ** сортировка**
+   * **Сортировка слиянием **
+   * - Вычисление `O()`, default - O(n*log(n))
+   * - Память `O(n)`
+   */
+  static MergeSort = (array) => {
+    const start = new Date().getTime()
+
+    let a = 0
+
+    const Merge = (left, right) => {
+      const collection = []
+      let len = left.length + right.length
+
+      let leftPointer = 0
+      let rightPointer = 0
+
+      for (let i = 0; i < len; i++) {
+        a++
+        if (leftPointer < left.length && rightPointer < right.length) {
+          if (left[leftPointer] < right[rightPointer]) {
+            collection.push(left[leftPointer])
+            leftPointer++
+          } else {
+            collection.push(right[rightPointer])
+            rightPointer++
+          }
+        } else {
+          if (rightPointer < right.length) {
+            collection.push(right[rightPointer])
+            rightPointer++
+          } else {
+            collection.push(left[leftPointer])
+            leftPointer++
+          }
+        }
+      }
+
+      return collection
+    }
+
+    const Sort = (items) => {
+      a++
+      if (items.length == 1) return items
+
+      const mid = Math.floor(items.length / 2)
+      const left = items.slice(0, mid)
+      const right = items.slice(mid, items.length)
+
+      return Merge(Sort(left), Sort(right))
+    }
+
+    const result = Sort(array)
+
+    const end = new Date().getTime()
+    result.push(`O(${a})`)
+    result.push(`${end - start}ms`)
+
+    return result
+  }
+
+  /**
+   * **Быстрая сортировка Хоара**
    * - Вычисление min - `O()`, max - `O()`, default - O()
    * - Память `O()`
    */
-  // static Sort = (array) => {
-  //   const result = [...array]
+  static QuickSort = (array) => {
+    const start = new Date().getTime()
+    const result = [...array]
 
-  //   return result
-  // }
+    let a = 0
+
+    const end = new Date().getTime()
+    result.push(`O(${a})`)
+    result.push(`${end - start}ms`)
+
+    return result
+  }
 }
 
 let testArray = []
@@ -583,22 +650,22 @@ testArray = [
 ]
 // testArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 // testArray = [20, 19, 18, 17, 16, 15, 14, 13, 12, 11]
-testArray = [
-  20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
-]
-testArray = [
-  2, 3, 7, 4, 1, 5, 6, 9, 8, 10, 17, 13, 14, 12, 11, 16, 18, 15, 20, 19,
-]
+// testArray = [
+//   20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
+// ]
+// testArray = [
+//   2, 3, 7, 4, 1, 5, 6, 9, 8, 10, 17, 13, 14, 12, 11, 16, 18, 15, 20, 19,
+// ]
 // testArray = [
 //   20, 1, 15, 4, 17, 9, 10, 3, 12, 2, 19, 13, 5, 14, 6, 7, 18, 8, 11, 16,
 // ]
 // testArray = [6, 1, 9, 4, 2, 7, 5, 3, 8]
 
-for (let index = 0; index < 5000; index++) {
-  testArray.push(Math.round(Math.random() * 100)) //default
-  // testArray.push(index) //min
-  // testArray.reverse() //max
-}
+// for (let index = 0; index < 10000; index++) {
+//   testArray.push(Math.round(Math.random() * 100)) //default
+//   // testArray.push(index) //min
+//   // testArray.reverse() //max
+// }
 
 if (content) {
   insertResult('Initial', testArray)
@@ -611,6 +678,7 @@ if (content) {
   insertResult('HeapSort', Sort.HeapSort(testArray))
   insertResult('GnomeSort', Sort.GnomeSort(testArray))
   insertResult('RadixSort', Sort.RadixSort(testArray))
+  insertResult('MergeSort', Sort.MergeSort(testArray))
   insertResult(
     'DefaultSort',
     (function () {
