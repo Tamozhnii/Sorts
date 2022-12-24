@@ -628,13 +628,45 @@ class Sort {
   /**
    * **Быстрая сортировка Хоара**
    * - Вычисление min - `O()`, max - `O()`, default - O()
-   * - Память `O()`
    */
   static QuickSort = (array) => {
     const start = new Date().getTime()
     const result = [...array]
 
     let a = 0
+
+    const Swap = (left, right) => {
+      const temp = result[left]
+      result[left] = result[right]
+      result[right] = temp
+    }
+
+    const Partition = (left, right) => {
+      let pointer = left
+
+      for (let i = left; i <= right; i++) {
+        a++
+        if (result[i] < result[right]) {
+          Swap(pointer, i)
+          pointer++
+        }
+      }
+
+      Swap(pointer, right)
+      return pointer
+    }
+
+    const Sort = (left, right) => {
+      a++
+      if (left >= right) return
+
+      const pivot = Partition(left, right)
+
+      Sort(left, pivot - 1)
+      Sort(pivot + 1, right)
+    }
+
+    Sort(0, result.length - 1)
 
     const end = new Date().getTime()
     result.push(`O(${a})`)
@@ -650,22 +682,22 @@ testArray = [
 ]
 // testArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 // testArray = [20, 19, 18, 17, 16, 15, 14, 13, 12, 11]
-// testArray = [
-//   20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
-// ]
-// testArray = [
-//   2, 3, 7, 4, 1, 5, 6, 9, 8, 10, 17, 13, 14, 12, 11, 16, 18, 15, 20, 19,
-// ]
-// testArray = [
-//   20, 1, 15, 4, 17, 9, 10, 3, 12, 2, 19, 13, 5, 14, 6, 7, 18, 8, 11, 16,
-// ]
+testArray = [
+  20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
+]
+testArray = [
+  2, 3, 7, 4, 1, 5, 6, 9, 8, 10, 17, 13, 14, 12, 11, 16, 18, 15, 20, 19,
+]
+testArray = [
+  20, 1, 15, 4, 17, 9, 10, 3, 12, 2, 19, 13, 5, 14, 6, 7, 18, 8, 11, 16,
+]
 // testArray = [6, 1, 9, 4, 2, 7, 5, 3, 8]
 
-// for (let index = 0; index < 10000; index++) {
-//   testArray.push(Math.round(Math.random() * 100)) //default
-//   // testArray.push(index) //min
-//   // testArray.reverse() //max
-// }
+for (let index = 0; index < 5000; index++) {
+  testArray.push(Math.round(Math.random() * 100)) //default
+  // testArray.push(index) //min
+  // testArray.reverse() //max
+}
 
 if (content) {
   insertResult('Initial', testArray)
@@ -679,6 +711,7 @@ if (content) {
   insertResult('GnomeSort', Sort.GnomeSort(testArray))
   insertResult('RadixSort', Sort.RadixSort(testArray))
   insertResult('MergeSort', Sort.MergeSort(testArray))
+  insertResult('QuickSort', Sort.QuickSort(testArray))
   insertResult(
     'DefaultSort',
     (function () {
